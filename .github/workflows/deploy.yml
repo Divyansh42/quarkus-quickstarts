@@ -1,4 +1,4 @@
-name: App Build and Push
+name: App Build and Deploy
 on: [push, workflow_dispatch]
 env:
   IMAGE_REGISTRY: "quay.io"
@@ -12,12 +12,15 @@ env:
 
 jobs:
   checkout-and-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
 
       # Checkout project repository
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: check buildah version
+        run: buildah --version
 
       # If none of these files has changed, we assume that the contents of
       # .m2/repository can be fetched from the cache.
@@ -70,7 +73,7 @@ jobs:
           if-no-files-found: error
 
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [checkout-and-build]
     steps:
       - name: Download working directory
